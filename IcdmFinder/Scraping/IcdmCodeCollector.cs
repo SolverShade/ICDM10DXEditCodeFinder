@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using IcdmFinder.BusinessLogic;
 using IcdmFinder.Icdm10Codes;
 
 namespace IcdmFinder.Scraping
 {
-    public class CodeCollector
+    public static class IcdmCodeCollector
     {
         private static string workingDirectory = Environment.CurrentDirectory;
         private static string _projectDirectory => Directory.GetParent(workingDirectory).Parent.Parent.FullName;
 
         private static string icdm10CodesPath = _projectDirectory + "/Data/icdm10Codes.txt";
 
-        public List<IcdmCode> CollectAllIcdmCodes()
+        public static List<IcdmCode> CollectAllIcdmCodes()
         {
             List<IcdmCode> icdmCodes = new List<IcdmCode>();
 
@@ -49,6 +50,8 @@ namespace IcdmFinder.Scraping
                     }
                 }
             }
+
+            icdmCodes = MergeSortAlphabetical.MergeSort(icdmCodes);
 
             return icdmCodes;
         }

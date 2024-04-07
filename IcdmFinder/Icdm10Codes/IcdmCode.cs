@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IcdmFinder.Icdm10Codes
 {
-    public class IcdmCode
+    public class IcdmCode: IComparable<IcdmCode> 
     {
         public readonly string CodeName;
         public readonly string Description;
@@ -17,6 +17,17 @@ namespace IcdmFinder.Icdm10Codes
             CodeName = codeName;
             Description = description;
             Catagory = catagory;
+        }
+
+        public override string ToString()
+        {
+            return CodeName;
+        }
+
+        int IComparable<IcdmCode>.CompareTo(IcdmCode other)
+        {
+            // Compare based on CodeName
+            return string.Compare(this.CodeName, other.CodeName, StringComparison.Ordinal);
         }
     }
 }

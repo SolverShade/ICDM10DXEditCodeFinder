@@ -12,5 +12,7 @@ Application.Init();
 
 //Window icdmSearchWindow = WindowFactory.CreateIcdmSearchWindow();
 //Application.Top.Add(icdmSearchWindow);
+IcdmViewModel icdmViewModel = new IcdmViewModel();
+IcdmView icdmView = new IcdmView(icdmViewModel);
 
-Application.Run(new IcdmView(new IcdmViewModel()));
+Application.Run(icdmView);

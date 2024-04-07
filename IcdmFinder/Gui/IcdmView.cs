@@ -9,13 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
 using NStack;
+using IcdmFinder.Icdm10Codes;
+using System.Diagnostics;
 
 namespace IcdmFinder.Gui
 {
     public class IcdmView : Window
     {
         private readonly IcdmViewModel _viewModel;
-        readonly CompositeDisposable _disposable = new CompositeDisposable();
 
         public IcdmView(IcdmViewModel viewModel) : base("ICDM10 CODE SEARCHER")
         {
@@ -37,6 +38,16 @@ namespace IcdmFinder.Gui
             filterView.Add(icdmCategoryLabel);
             ComboBox icdmCategoryDropdown = IcdmCategoryDropdown(icdmCategoryLabel.X, icdmCategoryLabel.Y);
             filterView.Add(icdmCategoryDropdown);
+
+            FrameView icdmCodesView = IcdmCodesView();
+            this.Add(icdmCodesView);
+
+            Label relevantCodesLabel = RelevantCodesLabel(icdmCodesView.X, icdmCodesView.Y);
+            icdmCodesView.Add(relevantCodesLabel);
+            ListView relevantCodesView = RelevantCodesView(relevantCodesLabel.X, relevantCodesLabel.Y);
+            icdmCodesView.Add(relevantCodesView);
+
+            this.Enabled = true; 
         }
 
         private FrameView FilterView()
@@ -52,6 +63,21 @@ namespace IcdmFinder.Gui
 
             return filterView;
         }
+
+        private FrameView IcdmCodesView()
+        {
+            FrameView icdmCodesView = new FrameView("Icdm Codes")
+            {
+                X = Pos.Percent(25),
+                Y = 0,
+                Width = Dim.Percent(50),
+                Height = Dim.Fill(),
+                LayoutStyle = LayoutStyle.Computed
+            };
+
+            return icdmCodesView;
+        }
+
 
         private Label IcdmCodeNameLabel(Pos lastViewX, Pos lastViewY)
         {
@@ -75,7 +101,9 @@ namespace IcdmFinder.Gui
             };
 
             icdmCodeNameInput.TextChanged += (ustring e) =>
-                    _viewModel.IcdmName = icdmCodeNameInput.Text;
+                    _viewModel.IcdmNameFilter = icdmCodeNameInput.Text;
+            icdmCodeNameInput.TextChanged += (ustring e) =>
+                    _viewModel.RefreshRelevantIcdmCodes();
 
             return icdmCodeNameInput;
         }
@@ -112,7 +140,7 @@ namespace IcdmFinder.Gui
             Label IcdmCategorylabel = new Label("Icdm Category")
             {
                 X = lastViewX,
-                Y = lastViewY + 8,
+                Y = lastViewY + 20,
                 Width = 40,
             };
 
@@ -136,6 +164,33 @@ namespace IcdmFinder.Gui
             };
 
             return icdmCategoryDropdown;
+        }
+
+        Label RelevantCodesLabel(Pos lastViewX, Pos lastViewY)
+        {
+            Label relevantCodesLabel = new Label("Relevant Codes")
+            {
+                X = 0,
+                Y = lastViewY,
+                Width = 40,
+            };
+
+            return relevantCodesLabel;
+        }
+
+        ListView RelevantCodesView(Pos lastViewX, Pos lastViewY)
+        {
+            ListView relaventCodesView = new ListView(_viewModel.RelevantIcdmCodes)
+            {
+                X = lastViewX,
+                Y = lastViewY + 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+            };
+
+            //relaventCodesView.SelectedItemChanged += (e) => _viewModel.currentIcdmCode = (IcdmCode)e.Value;
+
+            return relaventCodesView;
         }
 
 
