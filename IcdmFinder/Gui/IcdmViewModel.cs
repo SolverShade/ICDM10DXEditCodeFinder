@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
@@ -23,34 +24,66 @@ namespace IcdmFinder.Gui
         {
             _allIcdmCodes = IcdmCodeCollector.CollectAllIcdmCodes();
             RelevantIcdmCodes = _allIcdmCodes.ToList();
+            SelectedIcdmCode = _allIcdmCodes[0];
         }
 
+        public string IcdmNameFilter { private get; set; } = string.Empty;
 
-        public ustring IcdmNameFilter { private get; set; } = ustring.Empty;
+        public string IcdmCodeDescriptionFilter { private get; set; } = string.Empty;
 
-        public List<ustring> DescriptionFilter { private get; set; } = new List<ustring>();
-
-        public ustring IcdmCatagoryFilter { private get; set; } = ustring.Empty;
+        public string IcdmCategoryFilter { private get; set; } = string.Empty;
 
         public List<IcdmCode> RelevantIcdmCodes { get; private set; } = new List<IcdmCode>();
 
-        public IcdmCode CurrentIcdmToDisplay { private get; set; } 
+        public IcdmCode SelectedIcdmCode { get; set; }
+
+        public event Action? SelectedIcdmCodeChanged;
 
         public void RefreshRelevantIcdmCodes()
         {
-            RelevantIcdmCodes.Clear(); 
+            RelevantIcdmCodes.Clear();
 
-            foreach(IcdmCode icdmCode in _allIcdmCodes)
+            foreach (IcdmCode icdmCode in _allIcdmCodes)
             {
-                if (icdmCode.CodeName.StartsWith(IcdmNameFilter.ToString()) == false 
-                    && IcdmNameFilter.IsEmpty == false)
+                if (icdmCode.CodeName.StartsWith(IcdmNameFilter.ToString()) == false
+                    && IcdmNameFilter != "")
+                    continue;
+
+                bool allFilterWordsFound = true;
+
+                List<string> filteredDescriptionWords = IcdmCodeDescriptionFilter.
+                    Split().Select(word => word.ToLower()).ToList();
+                List<string> descriptionWords = icdmCode.Description.
+                    ToString().Split().Select(word => word.ToLower()).ToList();
+
+                foreach (string filterWord in filteredDescriptionWords)
+                {
+                    if (IcdmCodeDescriptionFilter == "")
+                        continue;
+
+                    if (descriptionWords.Contains(filterWord) == false)
+                    {
+                        allFilterWordsFound = false;
+                    }
+                }
+
+                if (allFilterWordsFound == false)
+                    continue;
+
+                if (icdmCode.Catagory != IcdmCategoryFilter
+                    && IcdmCategoryFilter != ""
+                    && IcdmCategoryFilter != "Any")
                     continue;
 
                 RelevantIcdmCodes.Add(icdmCode);
             }
-
-            Debug.WriteLine("Bababooy");
         }
-        
+
+        public void ChangeSelectedIcdmCode(IcdmCode newCode)
+        {
+            SelectedIcdmCode = newCode;
+            SelectedIcdmCodeChanged?.Invoke();
+        }
+
     }
 }

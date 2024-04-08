@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,6 +13,14 @@
     <PackageReference Include="ReactiveUI" Version="19.6.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
     <PackageReference Include="Terminal.Gui" Version="1.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\HarambeCrompten\source\repos\Icdm10Finder\IcdmFinder\IcdmFinder\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\HarambeCrompten\source\repos\Icdm10Finder\IcdmFinder\IcdmFinder\.editorconfig" />
   </ItemGroup>
 
 </Project>
